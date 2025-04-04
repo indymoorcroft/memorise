@@ -1,11 +1,13 @@
 import "./style.scss";
-import { getRandomTile } from "./utils";
+import { checkCorrect, checkCorrectSequence, getRandomTile } from "./utils";
 
 let numOfSquares: number = 16;
 let numOfSequences: number = 4;
 let gameInterval: number = 2000;
 let currTile: string;
-let sequence: string[] = [];
+
+const sequence: string[] = [];
+const userSequence: string[] = [];
 
 const board = document.getElementById("board");
 const overlay = document.getElementById("overlay");
@@ -16,15 +18,17 @@ if (!board || !startButton || !overlay) {
 }
 
 // Sets up the board
-for (let i = 0; i < numOfSquares; i++) {
-  const tile = document.createElement("div");
-  tile.classList.add("container__board--tile");
-  tile.id = i.toString();
-  board?.appendChild(tile);
-}
+const setGame = () => {
+  for (let i = 0; i < numOfSquares; i++) {
+    const tile = document.createElement("div");
+    tile.classList.add("container__board--tile");
+    tile.id = i.toString();
+    board?.appendChild(tile);
+  }
+};
 
 // Initiates pattern
-function startPattern() {
+const startPattern = () => {
   if (startButton) {
     startButton.disabled = true;
   }
@@ -33,39 +37,39 @@ function startPattern() {
     if (numOfSequences > 0) {
       setTile();
       numOfSequences--;
-      console.log(sequence);
     } else {
-      clearInterval(gameInterval);
-
-      removeTileColour();
-
+      changeTile(currTile, "remove");
       showOverlay();
+      clearInterval(gameInterval);
     }
   }, gameInterval);
-}
+};
 
-// Changes tile to Green
-const changeTileColour = () => {
+// Gets random tile
+const selectTile = () => {
   const index: string = getRandomTile(numOfSquares);
 
   if (currTile === index) {
-    changeTileColour();
+    selectTile();
     return;
   }
 
   currTile = index;
   sequence.push(index);
-  const tile = document.getElementById(index);
-
-  tile?.classList.remove("container__board--tile");
-  tile?.classList.add("container__board--tile--change");
+  changeTile(index, "add");
 };
 
-// Changes tile back to Red
-const removeTileColour = (): string | undefined => {
-  const tile = document.getElementById(currTile);
-  tile?.classList.remove("container__board--tile--change");
-  tile?.classList.add("container__board--tile");
+// Changes colour of the tile
+const changeTile = (id: string, type: string): string | undefined => {
+  const tile = document.getElementById(id);
+
+  if (type === "add") {
+    tile?.classList.remove("container__board--tile");
+    tile?.classList.add("container__board--tile--change");
+  } else {
+    tile?.classList.remove("container__board--tile--change");
+    tile?.classList.add("container__board--tile");
+  }
 
   return tile?.id;
 };
@@ -73,13 +77,13 @@ const removeTileColour = (): string | undefined => {
 // Controls tile flow
 const setTile = () => {
   if (currTile) {
-    const id = removeTileColour();
+    const id = changeTile(currTile, "remove");
     if (id) {
       currTile = id;
     }
   }
 
-  changeTileColour();
+  selectTile();
 };
 
 // Show overlay
@@ -88,8 +92,39 @@ const showOverlay = () => {
 
   setTimeout(() => {
     overlay.style.visibility = "hidden";
+    board.style.pointerEvents = "all";
   }, 2000);
+};
+
+setGame();
+
+// Handles User Guesses
+const handleClick = (event: Event) => {
+  if (!event.target) return;
+
+  const tileId = (event.target as Element).id;
+
+  if (userSequence.length < sequence.length) {
+    const isCorrect = checkCorrect(sequence, tileId);
+
+    if (isCorrect) {
+      changeTile(tileId, "add");
+      userSequence.push(tileId);
+    } else {
+      alert("wrong! game over");
+    }
+  } else {
+    const isAllCorrect = checkCorrectSequence(sequence, userSequence);
+
+    if (isAllCorrect) {
+      changeTile(tileId, "add");
+      alert("you win!");
+    }
+  }
 };
 
 // Starts pattern on button press
 startButton.addEventListener("click", startPattern);
+
+// handles user click on buttons
+board.addEventListener("click", handleClick);

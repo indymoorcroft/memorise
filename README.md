@@ -8,6 +8,8 @@
 
   - [x] Board
 
+- [x] Overlay
+
 - [ ] Buttons
 
   - [x] Start Game
@@ -26,9 +28,9 @@
 
 - [x] Dynamically create tiles
 - [x] Use set interval to randomly change colour of tiles in a sequence
-- [ ] Store sequence in array
-- [ ] eventListeners: clicks
+- [x] Store sequence in array
+- [x] eventListeners: clicks
   - [x] click to start the pattern
-  - [ ] make sure clicks match stored sequence
-- [ ] display buttons depending on success/failure of game
+  - [x] check that clicks match stored sequence
+- [ ] Change overlay depending on success/failure of game
 - [ ] Change speed & number of tiles based on level achieved
