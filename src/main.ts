@@ -2,14 +2,16 @@ import "./style.scss";
 import { getRandomTile } from "./utils";
 
 let numOfSquares: number = 16;
-let sequence: number = 4;
+let numOfSequences: number = 4;
 let gameInterval: number = 2000;
 let currTile: string;
+let sequence: string[] = [];
 
 const board = document.getElementById("board");
+const overlay = document.getElementById("overlay");
 const startButton = document.querySelector<HTMLButtonElement>("#start");
 
-if (!board || !startButton) {
+if (!board || !startButton || !overlay) {
   throw new Error("There was a problem trying to select an element");
 }
 
@@ -23,13 +25,21 @@ for (let i = 0; i < numOfSquares; i++) {
 
 // Initiates pattern
 function startPattern() {
+  if (startButton) {
+    startButton.disabled = true;
+  }
+
   setInterval(() => {
-    if (sequence > 0) {
+    if (numOfSequences > 0) {
       setTile();
-      sequence--;
+      numOfSequences--;
+      console.log(sequence);
     } else {
       clearInterval(gameInterval);
+
       removeTileColour();
+
+      showOverlay();
     }
   }, gameInterval);
 }
@@ -37,7 +47,14 @@ function startPattern() {
 // Changes tile to Green
 const changeTileColour = () => {
   const index: string = getRandomTile(numOfSquares);
+
+  if (currTile === index) {
+    changeTileColour();
+    return;
+  }
+
   currTile = index;
+  sequence.push(index);
   const tile = document.getElementById(index);
 
   tile?.classList.remove("container__board--tile");
@@ -63,6 +80,15 @@ const setTile = () => {
   }
 
   changeTileColour();
+};
+
+// Show overlay
+const showOverlay = () => {
+  overlay.style.visibility = "visible";
+
+  setTimeout(() => {
+    overlay.style.visibility = "hidden";
+  }, 2000);
 };
 
 // Starts pattern on button press

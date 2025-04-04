@@ -51,6 +51,31 @@ body {
   }
 }
 
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: black;
+  visibility: hidden;
+
+  &__card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aliceblue;
+    width: 35vw;
+    height: 25vw;
+    border-radius: 4px;
+    text-align: center;
+  }
+}
+
 button {
   margin: 1rem;
   padding: 0.3rem 0.6rem;
