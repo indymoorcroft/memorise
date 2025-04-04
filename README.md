@@ -4,27 +4,27 @@
 
 ### HTML
 
-- [ ] Container
+- [x] Container
 
-  - [ ] Board
+  - [x] Board
 
 - [ ] Buttons
 
-  - [ ] Start Game
+  - [x] Start Game
   - [ ] Restart Game
   - [ ] Next Level
 
-- [ ] Level
+- [x] Level
 
 ### SCSS
 
-- [ ] Style the board
-- [ ] Style the tiles to fill the board 4 x 4
+- [x] Style the board
+- [x] Style the tiles to fill the board 4 x 4
 - [ ] Style the buttons
 
 ### TS Logic
 
-- [ ] Dynamically create tiles
+- [x] Dynamically create tiles
 - [ ] Use set interval to randomly change colour of tiles in a sequence
 - [ ] Store sequence in array
 - [ ] eventListeners: clicks
