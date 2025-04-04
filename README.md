@@ -25,9 +25,10 @@
 ### TS Logic
 
 - [x] Dynamically create tiles
-- [ ] Use set interval to randomly change colour of tiles in a sequence
+- [x] Use set interval to randomly change colour of tiles in a sequence
 - [ ] Store sequence in array
 - [ ] eventListeners: clicks
+  - [x] click to start the pattern
   - [ ] make sure clicks match stored sequence
 - [ ] display buttons depending on success/failure of game
 - [ ] Change speed & number of tiles based on level achieved
