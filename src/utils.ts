@@ -3,3 +3,14 @@ export const getRandomTile = (numOfSquares: number): string => {
 
   return num.toString();
 };
+
+export const checkCorrect = (sequence: string[], selected: string): boolean => {
+  return sequence.includes(selected);
+};
+
+export const checkCorrectSequence = (
+  sequence: string[],
+  userSequence: string[]
+): boolean => {
+  return JSON.stringify(sequence) === JSON.stringify(userSequence);
+};
