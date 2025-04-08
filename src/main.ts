@@ -3,17 +3,23 @@ import { checkCorrect, checkCorrectSequence, getRandomTile } from "./utils";
 
 let numOfSquares: number = 16;
 let numOfSequences: number = 4;
-let gameInterval: number = 2000;
+let intervalTime: number = 2000;
 let currTile: string;
 
-const sequence: string[] = [];
-const userSequence: string[] = [];
+let sequence: string[] = [];
+let userSequence: string[] = [];
 
 const board = document.getElementById("board");
 const overlay = document.getElementById("overlay");
+const overlayText = document.querySelector<HTMLTextAreaElement>(
+  ".overlay__card--text"
+);
+const overlayButton = document.querySelector<HTMLDivElement>(
+  ".overlay__card--button"
+);
 const startButton = document.querySelector<HTMLButtonElement>("#start");
 
-if (!board || !startButton || !overlay) {
+if (!board || !startButton || !overlay || !overlayText || !overlayButton) {
   throw new Error("There was a problem trying to select an element");
 }
 
@@ -33,16 +39,18 @@ const startPattern = () => {
     startButton.disabled = true;
   }
 
-  setInterval(() => {
-    if (numOfSequences > 0) {
+  let sequenceCount = numOfSequences;
+
+  const intervalId = setInterval(() => {
+    if (sequenceCount > 0) {
       setTile();
-      numOfSequences--;
+      sequenceCount--;
     } else {
       changeTile(currTile, "remove");
       showOverlay();
-      clearInterval(gameInterval);
+      clearInterval(intervalId);
     }
-  }, gameInterval);
+  }, intervalTime);
 };
 
 // Gets random tile
@@ -50,8 +58,7 @@ const selectTile = () => {
   const index: string = getRandomTile(numOfSquares);
 
   if (currTile === index) {
-    selectTile();
-    return;
+    return selectTile();
   }
 
   currTile = index;
@@ -96,35 +103,75 @@ const showOverlay = () => {
   }, 2000);
 };
 
+const gameOver = (result: string) => {
+  overlay.style.visibility = "visible";
+
+  if (result === "failed") {
+    overlayText.innerHTML = "Incorrect. Try again.";
+    overlayButton.innerHTML = '<button id="restart">Restart</button>';
+  } else {
+    overlayText.innerHTML = "Correct!";
+    overlayButton.innerHTML = '<button id="next-level">Next Level</button>';
+  }
+};
+
+const resetGame = (result: string) => {
+  const tiles = document.querySelectorAll(".container__board--tile--change");
+
+  tiles.forEach((tile) => {
+    tile?.classList.remove("container__board--tile--change");
+    tile?.classList.add("container__board--tile");
+  });
+
+  overlayText.innerHTML = "Your turn";
+  overlayButton.innerHTML = "";
+  overlay.style.visibility = "hidden";
+  sequence = [];
+  userSequence = [];
+  currTile = "";
+  startButton.disabled = false;
+
+  if (result === "next-level") {
+    // Add next level func here
+    console.log("next level");
+  }
+};
+
 setGame();
 
 // Handles User Guesses
-const handleClick = (event: Event) => {
+const handleUserGuess = (event: Event) => {
   if (!event.target) return;
 
   const tileId = (event.target as Element).id;
 
-  if (userSequence.length < sequence.length) {
-    const isCorrect = checkCorrect(sequence, tileId);
+  const isCorrect = checkCorrect(sequence, tileId);
 
-    if (isCorrect) {
-      changeTile(tileId, "add");
-      userSequence.push(tileId);
-    } else {
-      alert("wrong! game over");
+  if (isCorrect) {
+    changeTile(tileId, "add");
+    userSequence.push(tileId);
+
+    if (userSequence.length === sequence.length) {
+      const isAllCorrect = checkCorrectSequence(sequence, userSequence);
+      if (isAllCorrect) {
+        gameOver("won");
+      }
     }
   } else {
-    const isAllCorrect = checkCorrectSequence(sequence, userSequence);
-
-    if (isAllCorrect) {
-      changeTile(tileId, "add");
-      alert("you win!");
-    }
+    gameOver("failed");
   }
+};
+
+const handleEndGameClick = (event: Event) => {
+  const buttonId = (event.target as Element).id;
+
+  resetGame(buttonId);
 };
 
 // Starts pattern on button press
 startButton.addEventListener("click", startPattern);
 
 // handles user click on buttons
-board.addEventListener("click", handleClick);
+board.addEventListener("click", handleUserGuess);
+
+overlayButton.addEventListener("click", handleEndGameClick);

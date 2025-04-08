@@ -10,11 +10,11 @@
 
 - [x] Overlay
 
-- [ ] Buttons
+- [x] Buttons
 
   - [x] Start Game
-  - [ ] Restart Game
-  - [ ] Next Level
+  - [x] Restart Game
+  - [x] Next Level
 
 - [x] Level
 
@@ -32,5 +32,5 @@
 - [x] eventListeners: clicks
   - [x] click to start the pattern
   - [x] check that clicks match stored sequence
-- [ ] Change overlay depending on success/failure of game
+- [x] Change overlay depending on success/failure of game
 - [ ] Change speed & number of tiles based on level achieved
