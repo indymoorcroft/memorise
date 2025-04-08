@@ -43,10 +43,14 @@ body {
       margin: 0px 1px;
       cursor: pointer;
 
+      &:hover {
+        background-color: #0ac743;
+      }
+
       &--change {
         width: 24%;
         height: 24%;
-        background-color: green;
+        background-color: #048c2d;
         margin: 0px 1px;
       }
     }
