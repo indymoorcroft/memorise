@@ -57,7 +57,7 @@ const startPattern = () => {
 const selectTile = () => {
   const index: string = getRandomTile(numOfSquares);
 
-  if (currTile === index) {
+  if (currTile === index || sequence.includes(index)) {
     return selectTile();
   }
 
@@ -115,6 +115,7 @@ const gameOver = (result: string) => {
   }
 };
 
+// Resets the game based on previous result
 const resetGame = (result: string) => {
   const tiles = document.querySelectorAll(".container__board--tile--change");
 
@@ -130,6 +131,7 @@ const resetGame = (result: string) => {
   userSequence = [];
   currTile = "";
   startButton.disabled = false;
+  board.style.pointerEvents = "none";
 
   if (result === "next-level") {
     // Add next level func here
