@@ -1,10 +1,16 @@
 import "./style.scss";
 import { checkCorrect, checkCorrectSequence, getRandomTile } from "./utils";
 
+type Result = {
+  result: string;
+  message: string;
+};
+
 let numOfSquares: number = 16;
 let numOfSequences: number = 4;
 let intervalTime: number = 2000;
 let currTile: string;
+let level = 1;
 
 let sequence: string[] = [];
 let userSequence: string[] = [];
@@ -18,8 +24,16 @@ const overlayButton = document.querySelector<HTMLDivElement>(
   ".overlay__card--button"
 );
 const startButton = document.querySelector<HTMLButtonElement>("#start");
+const levelStr = document.querySelector<HTMLHeadingElement>(".level");
 
-if (!board || !startButton || !overlay || !overlayText || !overlayButton) {
+if (
+  !board ||
+  !startButton ||
+  !overlay ||
+  !overlayText ||
+  !overlayButton ||
+  !levelStr
+) {
   throw new Error("There was a problem trying to select an element");
 }
 
@@ -103,14 +117,15 @@ const showOverlay = () => {
   }, 2000);
 };
 
-const gameOver = (result: string) => {
+// Shows overlay based on game ending
+const gameOver = ({ result, message }: Result) => {
   overlay.style.visibility = "visible";
 
   if (result === "failed") {
-    overlayText.innerHTML = "Incorrect. Try again.";
+    overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="restart">Restart</button>';
   } else {
-    overlayText.innerHTML = "Correct!";
+    overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="next-level">Next Level</button>';
   }
 };
@@ -134,8 +149,9 @@ const resetGame = (result: string) => {
   board.style.pointerEvents = "none";
 
   if (result === "next-level") {
-    // Add next level func here
-    console.log("next level");
+    levelStr.innerText = `Level ${(level += 1)}`;
+    level % 3 === 0 ? (numOfSequences = numOfSequences + 1) : null;
+    intervalTime = intervalTime - 50;
   }
 };
 
@@ -156,11 +172,22 @@ const handleUserGuess = (event: Event) => {
     if (userSequence.length === sequence.length) {
       const isAllCorrect = checkCorrectSequence(sequence, userSequence);
       if (isAllCorrect) {
-        gameOver("won");
+        gameOver({
+          result: "passed",
+          message: "Correct!",
+        });
+      } else {
+        gameOver({
+          result: "failed",
+          message: "Right squares... wrong order! Try again.",
+        });
       }
     }
   } else {
-    gameOver("failed");
+    gameOver({
+      result: "failed",
+      message: "Incorrect. Try again.",
+    });
   }
 };
 
