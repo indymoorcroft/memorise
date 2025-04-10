@@ -23,6 +23,7 @@
 - [x] Style the board
 - [x] Style the tiles to fill the board 4 x 4
 - [ ] Style the buttons
+- [x] Make the board responsive on all devices
 
 ### TS Logic
 
@@ -33,4 +34,7 @@
   - [x] click to start the pattern
   - [x] check that clicks match stored sequence
 - [x] Change overlay depending on success/failure of game
-- [ ] Change speed & number of tiles based on level achieved
+- [x] Change speed & number of tiles selected based on level achieved
+- [ ] Change board to 5 x 5 then 6 x 6 based on level achieved
+- [ ] Pattern to run from bottom to top
+- [ ] User gets 3 tries then the game resets to Level 1
