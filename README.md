@@ -35,6 +35,6 @@
   - [x] check that clicks match stored sequence
 - [x] Change overlay depending on success/failure of game
 - [x] Change speed & number of tiles selected based on level achieved
-- [ ] Change board to 5 x 5 then 6 x 6 based on level achieved
+- [x] Change board to 5 x 5 then 6 x 6 based on level achieved
 - [ ] Pattern to run from bottom to top
 - [ ] User gets 3 tries then the game resets to Level 1
