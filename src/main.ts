@@ -38,7 +38,13 @@ if (
 }
 
 // Sets up the board
-const setGame = () => {
+const setGame = (action?: string) => {
+  if (action === "reset") {
+    while (board.lastElementChild) {
+      board.removeChild(board.lastElementChild);
+    }
+  }
+
   for (let i = 0; i < numOfSquares; i++) {
     const tile = document.createElement("div");
     tile.classList.add("container__board--tile");
@@ -132,9 +138,11 @@ const gameOver = ({ result, message }: Result) => {
 
 // Resets the game based on previous result
 const resetGame = (result: string) => {
-  const tiles = document.querySelectorAll(".container__board--tile--change");
+  const changedTiles = document.querySelectorAll(
+    ".container__board--tile--change"
+  );
 
-  tiles.forEach((tile) => {
+  changedTiles.forEach((tile) => {
     tile?.classList.remove("container__board--tile--change");
     tile?.classList.add("container__board--tile");
   });
@@ -151,7 +159,23 @@ const resetGame = (result: string) => {
   if (result === "next-level") {
     levelStr.innerText = `Level ${(level += 1)}`;
     level % 3 === 0 ? (numOfSequences = numOfSequences + 1) : null;
-    intervalTime = intervalTime - 50;
+    intervalTime = intervalTime - 100;
+
+    if (level === 5 || level === 10) {
+      level === 5 ? (numOfSquares = 25) : (numOfSquares = 36);
+
+      setGame("reset");
+
+      const allTiles = document.querySelectorAll<HTMLDivElement>(
+        ".container__board--tile"
+      );
+
+      allTiles.forEach((tile) => {
+        level === 5 ? (tile.style.width = "19%") : (tile.style.width = "16%");
+
+        level === 5 ? (tile.style.height = "19%") : (tile.style.height = "16%");
+      });
+    }
   }
 };
 
