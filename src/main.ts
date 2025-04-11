@@ -1,5 +1,10 @@
 import "./style.scss";
-import { checkCorrect, checkCorrectSequence, getRandomTile } from "./utils";
+import {
+  checkCorrect,
+  checkCorrectSequence,
+  getFirstTile,
+  getNextTile,
+} from "./utils";
 
 type Result = {
   result: string;
@@ -7,11 +12,13 @@ type Result = {
 };
 
 let numOfSquares: number = 16;
-let numOfSequences: number = 4;
+// let numOfSequences: number = 4;
 let intervalTime: number = 2000;
 let currTile: string;
 let level: number = 1;
 let lives: number = 3;
+let rows: number = 4;
+let edgeNums: number[] = [1, 4, 5, 8, 9, 12];
 
 let sequence: string[] = [];
 let userSequence: string[] = [];
@@ -39,14 +46,14 @@ if (
 }
 
 // Sets up the board
-const setGame = (action?: string) => {
-  if (action === "reset") {
+const setGame = () => {
+  if (board.lastElementChild) {
     while (board.lastElementChild) {
       board.removeChild(board.lastElementChild);
     }
   }
 
-  for (let i = 0; i < numOfSquares; i++) {
+  for (let i = numOfSquares; i > 0; i--) {
     const tile = document.createElement("div");
     tile.classList.add("container__board--tile");
     tile.id = i.toString();
@@ -58,12 +65,9 @@ const setGame = (action?: string) => {
 const startPattern = () => {
   startButton.disabled = true;
 
-  let sequenceCount = numOfSequences;
-
   const intervalId = setInterval(() => {
-    if (sequenceCount > 0) {
+    if (!currTile || +currTile <= numOfSquares - rows) {
       selectTile();
-      sequenceCount--;
     } else {
       changeTile(currTile, "remove");
       showOverlay();
@@ -74,11 +78,14 @@ const startPattern = () => {
 
 // Controls tile flow
 const selectTile = () => {
-  if (currTile) {
-    changeTile(currTile, "remove");
-  }
+  let index: string;
 
-  const index: string = getRandomTile(numOfSquares);
+  if (!currTile) {
+    index = getFirstTile(rows);
+  } else {
+    changeTile(currTile, "remove");
+    index = getNextTile(+currTile, rows, edgeNums);
+  }
 
   if (currTile === index || sequence.includes(index)) {
     return selectTile();
@@ -113,7 +120,7 @@ const showOverlay = () => {
 };
 
 // Shows overlay based on game ending
-const gameOver = ({ result, message }: Result) => {
+const handleResult = ({ result, message }: Result) => {
   overlay.style.visibility = "visible";
 
   if (result === "failed") {
@@ -151,34 +158,50 @@ const resetGame = (event: Event) => {
   board.style.pointerEvents = "none";
 
   if (result === "game-over") {
-    numOfSquares = 16;
-    numOfSequences = 4;
-    intervalTime = 2000;
-    lives = 3;
-    level = 1;
-    levelStr.innerText = `Level ${level}`;
+    gameOver();
   }
 
   if (result === "next-level") {
-    levelStr.innerText = `Level ${(level += 1)}`;
-    level % 3 === 0 ? (numOfSequences = numOfSequences + 1) : null;
-    intervalTime = intervalTime - 100;
+    nextLevel();
+  }
+};
 
-    if (level === 5 || level === 10) {
-      level === 5 ? (numOfSquares = 25) : (numOfSquares = 36);
+const gameOver = () => {
+  numOfSquares = 16;
+  intervalTime = 2000;
+  lives = 3;
+  level = 1;
+  levelStr.innerText = `Level ${level}`;
+  edgeNums = [1, 4, 5, 8, 9, 12];
+  setGame();
+};
 
-      setGame("reset");
+const nextLevel = () => {
+  levelStr.innerText = `Level ${(level += 1)}`;
+  intervalTime = intervalTime - 100;
 
-      const allTiles = document.querySelectorAll<HTMLDivElement>(
-        ".container__board--tile"
-      );
-
-      allTiles.forEach((tile) => {
-        level === 5 ? (tile.style.width = "19%") : (tile.style.width = "16%");
-
-        level === 5 ? (tile.style.height = "19%") : (tile.style.height = "16%");
-      });
+  if (level === 5 || level === 10) {
+    if (level === 5) {
+      numOfSquares = 36;
+      rows = 6;
+      edgeNums = [1, 6, 7, 12, 13, 18, 19, 24, 25, 30];
+    } else {
+      numOfSquares = 64;
+      rows = 8;
+      edgeNums = [1, 8, 9, 16, 17, 24, 25, 32, 33, 40, 41, 48, 49, 56];
     }
+
+    setGame();
+
+    const allTiles = document.querySelectorAll<HTMLDivElement>(
+      ".container__board--tile"
+    );
+
+    allTiles.forEach((tile) => {
+      level === 5 ? (tile.style.width = "16%") : (tile.style.width = "12%");
+
+      level === 5 ? (tile.style.height = "16%") : (tile.style.height = "12%");
+    });
   }
 };
 
@@ -199,11 +222,11 @@ const handleUserGuess = (event: Event) => {
     if (userSequence.length === sequence.length) {
       const isAllCorrect = checkCorrectSequence(sequence, userSequence);
       isAllCorrect
-        ? gameOver({
+        ? handleResult({
             result: "passed",
             message: "Correct!",
           })
-        : gameOver({
+        : handleResult({
             result: "failed",
             message: "Right squares... wrong order! Try again.",
           });
@@ -212,12 +235,12 @@ const handleUserGuess = (event: Event) => {
     lives--;
 
     if (lives > 0) {
-      gameOver({
+      handleResult({
         result: "failed",
         message: `Incorrect. Try again. You have ${lives} lives remaining`,
       });
     } else {
-      gameOver({
+      handleResult({
         result: "no lives",
         message: `Oh no! You have ${lives} lives remaining. Back to Level 1`,
       });

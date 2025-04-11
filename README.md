@@ -36,5 +36,6 @@
 - [x] Change overlay depending on success/failure of game
 - [x] Change speed & number of tiles selected based on level achieved
 - [x] Change board to 5 x 5 then 6 x 6 based on level achieved
-- [ ] Pattern to run from bottom to top
+- [x] Pattern to run from bottom to top
 - [x] User gets 3 tries then the game resets to Level 1
+- [ ] Check pattern is in the right order and end turn if incorrect
