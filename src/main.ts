@@ -10,7 +10,8 @@ let numOfSquares: number = 16;
 let numOfSequences: number = 4;
 let intervalTime: number = 2000;
 let currTile: string;
-let level = 1;
+let level: number = 1;
+let lives: number = 3;
 
 let sequence: string[] = [];
 let userSequence: string[] = [];
@@ -55,15 +56,13 @@ const setGame = (action?: string) => {
 
 // Initiates pattern
 const startPattern = () => {
-  if (startButton) {
-    startButton.disabled = true;
-  }
+  startButton.disabled = true;
 
   let sequenceCount = numOfSequences;
 
   const intervalId = setInterval(() => {
     if (sequenceCount > 0) {
-      setTile();
+      selectTile();
       sequenceCount--;
     } else {
       changeTile(currTile, "remove");
@@ -73,8 +72,12 @@ const startPattern = () => {
   }, intervalTime);
 };
 
-// Gets random tile
+// Controls tile flow
 const selectTile = () => {
+  if (currTile) {
+    changeTile(currTile, "remove");
+  }
+
   const index: string = getRandomTile(numOfSquares);
 
   if (currTile === index || sequence.includes(index)) {
@@ -87,7 +90,7 @@ const selectTile = () => {
 };
 
 // Changes colour of the tile
-const changeTile = (id: string, type: string): string | undefined => {
+const changeTile = (id: string, type: string) => {
   const tile = document.getElementById(id);
 
   if (type === "add") {
@@ -97,20 +100,6 @@ const changeTile = (id: string, type: string): string | undefined => {
     tile?.classList.remove("container__board--tile--change");
     tile?.classList.add("container__board--tile");
   }
-
-  return tile?.id;
-};
-
-// Controls tile flow
-const setTile = () => {
-  if (currTile) {
-    const id = changeTile(currTile, "remove");
-    if (id) {
-      currTile = id;
-    }
-  }
-
-  selectTile();
 };
 
 // Show overlay
@@ -130,14 +119,19 @@ const gameOver = ({ result, message }: Result) => {
   if (result === "failed") {
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="restart">Restart</button>';
-  } else {
+  } else if (result === "passed") {
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="next-level">Next Level</button>';
+  } else {
+    overlayText.innerHTML = `${message}`;
+    overlayButton.innerHTML = '<button id="game-over">Restart</button>';
   }
 };
 
 // Resets the game based on previous result
-const resetGame = (result: string) => {
+const resetGame = (event: Event) => {
+  const result = (event.target as Element).id;
+
   const changedTiles = document.querySelectorAll(
     ".container__board--tile--change"
   );
@@ -155,6 +149,15 @@ const resetGame = (result: string) => {
   currTile = "";
   startButton.disabled = false;
   board.style.pointerEvents = "none";
+
+  if (result === "game-over") {
+    numOfSquares = 16;
+    numOfSequences = 4;
+    intervalTime = 2000;
+    lives = 3;
+    level = 1;
+    levelStr.innerText = `Level ${level}`;
+  }
 
   if (result === "next-level") {
     levelStr.innerText = `Level ${(level += 1)}`;
@@ -195,36 +198,38 @@ const handleUserGuess = (event: Event) => {
 
     if (userSequence.length === sequence.length) {
       const isAllCorrect = checkCorrectSequence(sequence, userSequence);
-      if (isAllCorrect) {
-        gameOver({
-          result: "passed",
-          message: "Correct!",
-        });
-      } else {
-        gameOver({
-          result: "failed",
-          message: "Right squares... wrong order! Try again.",
-        });
-      }
+      isAllCorrect
+        ? gameOver({
+            result: "passed",
+            message: "Correct!",
+          })
+        : gameOver({
+            result: "failed",
+            message: "Right squares... wrong order! Try again.",
+          });
     }
   } else {
-    gameOver({
-      result: "failed",
-      message: "Incorrect. Try again.",
-    });
+    lives--;
+
+    if (lives > 0) {
+      gameOver({
+        result: "failed",
+        message: `Incorrect. Try again. You have ${lives} lives remaining`,
+      });
+    } else {
+      gameOver({
+        result: "no lives",
+        message: `Oh no! You have ${lives} lives remaining. Back to Level 1`,
+      });
+    }
   }
-};
-
-const handleEndGameClick = (event: Event) => {
-  const buttonId = (event.target as Element).id;
-
-  resetGame(buttonId);
 };
 
 // Starts pattern on button press
 startButton.addEventListener("click", startPattern);
 
-// handles user click on buttons
+// Handles user guesses
 board.addEventListener("click", handleUserGuess);
 
-overlayButton.addEventListener("click", handleEndGameClick);
+// Progresses or resets the game
+overlayButton.addEventListener("click", resetGame);
