@@ -38,4 +38,4 @@
 - [x] Change board to 5 x 5 then 6 x 6 based on level achieved
 - [x] Pattern to run from bottom to top
 - [x] User gets 3 tries then the game resets to Level 1
-- [ ] Check pattern is in the right order and end turn if incorrect
+- [x] Check pattern is in the right order and end turn if incorrect

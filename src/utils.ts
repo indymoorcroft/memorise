@@ -34,13 +34,12 @@ export const getNextTile = (
   }
 };
 
-export const checkCorrect = (sequence: string[], selected: string): boolean => {
-  return sequence.includes(selected);
-};
-
-export const checkCorrectSequence = (
+export const checkCorrect = (
   sequence: string[],
-  userSequence: string[]
+  userSequence: string[],
+  guesses: number
 ): boolean => {
-  return JSON.stringify(sequence) === JSON.stringify(userSequence);
+  const slicedArray = sequence.slice(0, guesses);
+
+  return JSON.stringify(slicedArray) === JSON.stringify(userSequence);
 };
