@@ -1,10 +1,5 @@
 import "./style.scss";
-import {
-  checkCorrect,
-  checkCorrectSequence,
-  getFirstTile,
-  getNextTile,
-} from "./utils";
+import { checkCorrect, getFirstTile, getNextTile } from "./utils";
 
 type Result = {
   result: string;
@@ -12,7 +7,6 @@ type Result = {
 };
 
 let numOfSquares: number = 16;
-// let numOfSequences: number = 4;
 let intervalTime: number = 2000;
 let currTile: string;
 let level: number = 1;
@@ -22,6 +16,7 @@ let edgeNums: number[] = [1, 4, 5, 8, 9, 12];
 
 let sequence: string[] = [];
 let userSequence: string[] = [];
+let guesses = 0;
 
 const board = document.getElementById("board");
 const overlay = document.getElementById("overlay");
@@ -153,6 +148,7 @@ const resetGame = (event: Event) => {
   overlay.style.visibility = "hidden";
   sequence = [];
   userSequence = [];
+  guesses = 0;
   currTile = "";
   startButton.disabled = false;
   board.style.pointerEvents = "none";
@@ -178,9 +174,10 @@ const gameOver = () => {
 
 const nextLevel = () => {
   levelStr.innerText = `Level ${(level += 1)}`;
-  intervalTime = intervalTime - 100;
+  intervalTime = intervalTime - 250;
 
   if (level === 5 || level === 10) {
+    intervalTime = 2000;
     if (level === 5) {
       numOfSquares = 36;
       rows = 6;
@@ -213,23 +210,19 @@ const handleUserGuess = (event: Event) => {
 
   const tileId = (event.target as Element).id;
 
-  const isCorrect = checkCorrect(sequence, tileId);
+  userSequence.push(tileId);
+  guesses += 1;
+
+  const isCorrect = checkCorrect(sequence, userSequence, guesses);
 
   if (isCorrect) {
     changeTile(tileId, "add");
-    userSequence.push(tileId);
 
     if (userSequence.length === sequence.length) {
-      const isAllCorrect = checkCorrectSequence(sequence, userSequence);
-      isAllCorrect
-        ? handleResult({
-            result: "passed",
-            message: "Correct!",
-          })
-        : handleResult({
-            result: "failed",
-            message: "Right squares... wrong order! Try again.",
-          });
+      handleResult({
+        result: "passed",
+        message: "Correct!",
+      });
     }
   } else {
     lives--;
