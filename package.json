@@ -3,15 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://indymoorcroft.github.io/memorise/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest watch --silent=false --ui"
+    "test": "vitest watch --silent=false --ui",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@vitest/ui": "^3.1.1",
+    "gh-pages": "^6.3.0",
     "jest": "^29.7.0",
     "scss": "^0.2.4",
     "typescript": "~5.7.2",
