@@ -28,6 +28,7 @@ const overlayButton = document.querySelector<HTMLDivElement>(
 );
 const startButton = document.querySelector<HTMLButtonElement>("#start");
 const levelStr = document.querySelector<HTMLHeadingElement>(".level");
+const audio = document.querySelector<HTMLAudioElement>("#audio");
 
 if (
   !board ||
@@ -35,7 +36,8 @@ if (
   !overlay ||
   !overlayText ||
   !overlayButton ||
-  !levelStr
+  !levelStr ||
+  !audio
 ) {
   throw new Error("There was a problem trying to select an element");
 }
@@ -89,6 +91,8 @@ const selectTile = () => {
   currTile = index;
   sequence.push(index);
   changeTile(index, "add");
+
+  playAudio("audio/zapsplat_multimedia_game_sound_simple_menu_beep_113383.mp3");
 };
 
 // Changes colour of the tile
@@ -119,12 +123,22 @@ const handleResult = ({ result, message }: Result) => {
   overlay.style.visibility = "visible";
 
   if (result === "failed") {
+    playAudio(
+      "/audio/zapsplat_multimedia_game_sound_retro_arcade_lo_fi_fail_lose_life_004_107586.mp3"
+    );
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="restart">Restart</button>';
   } else if (result === "passed") {
+    playAudio(
+      "/audio/zapsplat_multimedia_game_sound_orchestral_end_win_107266.mp3"
+    );
+
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="next-level">Next Level</button>';
   } else {
+    playAudio(
+      "/audio/zapsplat_multimedia_male_voice_processed_says_game_over_002_23669.mp3"
+    );
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="game-over">Restart</button>';
   }
@@ -202,10 +216,19 @@ const nextLevel = () => {
   }
 };
 
+const playAudio = (url: string) => {
+  audio.src = url;
+  audio.play();
+};
+
 setGame();
 
 // Handles User Guesses
 const handleUserGuess = (event: Event) => {
+  playAudio(
+    "/audio/zapsplat_vehicles_car_radio_button_soft_rubber_press_on_002_113479.mp3"
+  );
+
   if (!event.target) return;
 
   const tileId = (event.target as Element).id;
