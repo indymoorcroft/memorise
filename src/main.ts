@@ -124,20 +124,20 @@ const handleResult = ({ result, message }: Result) => {
 
   if (result === "failed") {
     playAudio(
-      "/audio/zapsplat_multimedia_game_sound_retro_arcade_lo_fi_fail_lose_life_004_107586.mp3"
+      "audio/zapsplat_multimedia_game_sound_retro_arcade_lo_fi_fail_lose_life_004_107586.mp3"
     );
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="restart">Restart</button>';
   } else if (result === "passed") {
     playAudio(
-      "/audio/zapsplat_multimedia_game_sound_orchestral_end_win_107266.mp3"
+      "audio/zapsplat_multimedia_game_sound_orchestral_end_win_107266.mp3"
     );
 
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="next-level">Next Level</button>';
   } else {
     playAudio(
-      "/audio/zapsplat_multimedia_male_voice_processed_says_game_over_002_23669.mp3"
+      "audio/zapsplat_multimedia_male_voice_processed_says_game_over_002_23669.mp3"
     );
     overlayText.innerHTML = `${message}`;
     overlayButton.innerHTML = '<button id="game-over">Restart</button>';
@@ -226,7 +226,7 @@ setGame();
 // Handles User Guesses
 const handleUserGuess = (event: Event) => {
   playAudio(
-    "/audio/zapsplat_vehicles_car_radio_button_soft_rubber_press_on_002_113479.mp3"
+    "audio/zapsplat_vehicles_car_radio_button_soft_rubber_press_on_002_113479.mp3"
   );
 
   if (!event.target) return;
