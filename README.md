@@ -1,6 +1,6 @@
 # memorise
 
-A browser-based game that challenges players to recall and replicate sequences of flashing tiles. As players progress, the game increases in complexty bu speeding up the sequences and expanding the grid size.
+A browser-based game that challenges players to recall and replicate sequences of flashing tiles. As players progress, the game increases in complexity by speeding up the sequences and expanding the grid size.
 
 Hosted: https://indymoorcroft.github.io/memorise/
 
@@ -37,7 +37,6 @@ Hosted: https://indymoorcroft.github.io/memorise/
 
 ```
    git clone https://github.com/indymoorcroft/memorise.git
-
    cd memorise
 ```
 
